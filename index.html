@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#BC6C4B">
+<title>Birth Prep</title>
+<style>
+:root{
+  --bg:#F4ECE0; --surface:#FCF8F1; --surface2:#F1E6D6;
+  --terra:#BC6C4B; --rust:#9A4F33; --clay:#56402F;
+  --ink:#463829; --soft:#8B7B67; --sage:#79864F;
+  --line:#EADDCB; --line2:#DAC8B0;
+  --shadow:0 2px 14px rgba(150,110,75,.07);
+  --serif:var(--sans); /* unified — one typeface throughout, no font mixing */
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:rgba(188,108,75,.12); }
+html{ scroll-behavior:smooth; }
+body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.55; padding-bottom:48px; }
+a{ color:inherit; text-decoration:none; }
+
+/* progress ribbon (sticky) */
+.bar{ position:sticky; top:0; z-index:20; background:rgba(244,236,224,.96);
+  -webkit-backdrop-filter:saturate(1.5) blur(9px); backdrop-filter:saturate(1.5) blur(9px);
+  border-bottom:1px solid var(--line); padding:9px 0; }
+.ribbon{ display:flex; align-items:center; gap:6px; overflow-x:auto; padding:0 13px; scrollbar-width:none; }
+.ribbon::-webkit-scrollbar{ display:none; }
+.step{ flex:0 0 auto; display:flex; align-items:center; gap:6px; padding:6px 12px 6px 7px;
+  border-radius:999px; background:var(--surface); border:1px solid var(--line2);
+  font-size:13px; font-weight:700; color:var(--rust); white-space:nowrap; }
+.step .d{ width:19px; height:19px; border-radius:50%; background:var(--surface2); border:1px solid var(--line2);
+  color:var(--rust); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.step.on{ background:var(--terra); color:#fff; border-color:var(--terra); }
+.step.on .d{ background:#fff; color:var(--terra); border-color:#fff; }
+.step:active{ opacity:.85; }
+.step.tool{ color:var(--sage); padding:6px 13px; }
+.sep{ flex:0 0 auto; width:1px; height:20px; background:var(--line2); margin:0 2px; }
+
+/* hero */
+.hero{ text-align:center; padding:26px 22px 6px; }
+.hero .sun{ width:44px; height:44px; margin:0 auto 8px; display:block; }
+.hero h1{ font-family:var(--serif); font-weight:600; color:var(--clay); font-size:39px; margin:4px 0 3px; line-height:1; }
+.hero .sub{ color:var(--sage); font-size:17px; font-style:italic; }
+.kwline{ display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin:13px 0 0; }
+.kwline span{ font-family:var(--serif); color:var(--rust); background:var(--surface); border:1px solid var(--line2); border-radius:999px; padding:4px 13px; font-size:14px; }
+.hsoft{ margin:13px 0 0; color:var(--sage); font-style:italic; font-size:14.5px; }
+
+.wrap{ max-width:560px; margin:0 auto; padding:0 14px; }
+.sectlabel{ text-align:center; font-family:var(--serif); color:var(--clay); font-size:20px; margin:20px 0 3px; }
+.sectsub{ text-align:center; color:var(--soft); font-size:13.5px; font-style:italic; margin:0 0 12px; }
+
+/* stage picker */
+.selector{ display:flex; flex-direction:column; gap:10px; margin:0 0 18px; }
+.sbtn{ display:flex; align-items:center; gap:13px; background:var(--surface); border:1px solid var(--line2);
+  border-left:5px solid var(--terra); border-radius:16px; padding:15px 16px; box-shadow:var(--shadow); }
+.sbtn:active{ background:var(--surface2); }
+.sbtn .sn{ flex:0 0 36px; height:36px; border-radius:50%; background:var(--terra); color:#fff;
+  font-family:var(--serif); font-size:19px; display:flex; align-items:center; justify-content:center; }
+.sbtn .stx{ flex:1; } .sbtn .stx b{ display:block; color:var(--clay); font-size:17px; }
+.sbtn .stx small{ color:var(--soft); font-size:12.5px; }
+.sbtn .go{ color:var(--terra); font-size:19px; }
+
+/* soften cue */
+.softcue{ display:flex; align-items:flex-start; gap:11px; background:#EEF0E2; border:1px solid #DCE2C6;
+  border-radius:16px; padding:13px 15px; margin:0 0 22px; box-shadow:var(--shadow); }
+.softcue .ic{ flex:0 0 30px; height:30px; border-radius:50%; background:var(--sage); color:#fff; display:flex; align-items:center; justify-content:center; font-size:15px; }
+.softcue p{ margin:0; font-size:14.5px; color:var(--ink); }
+.softcue b{ color:var(--clay); }
+
+/* collapsible sections */
+details{ background:var(--surface); border:1px solid var(--line); border-radius:18px; margin:0 0 13px; overflow:hidden; box-shadow:var(--shadow); }
+details.stagebox{ border-left:5px solid var(--terra); }
+details.ref{ border-left:5px solid var(--sage); }
+summary{ list-style:none; cursor:pointer; display:flex; align-items:center; gap:13px; padding:17px 16px; }
+summary::-webkit-details-marker{ display:none; }
+.snum{ flex:0 0 38px; height:38px; border-radius:50%; background:var(--terra); color:#fff;
+  font-family:var(--serif); font-size:19px; display:flex; align-items:center; justify-content:center; }
+.snum.g{ background:var(--sage); font-size:15px; font-weight:700; font-family:var(--sans); }
+.stit{ flex:1; } .stit b{ display:block; font-family:var(--serif); color:var(--clay); font-size:21px; line-height:1.05; }
+.stit small{ color:var(--sage); font-size:13px; font-style:italic; }
+.chev{ flex:0 0 auto; color:var(--terra); font-size:14px; transition:transform .2s; }
+details[open] .chev{ transform:rotate(180deg); }
+.sbody{ padding:2px 16px 12px; }
+
+/* stage card internals */
+.cuestrip{ display:flex; flex-wrap:wrap; gap:6px; margin:2px 0 10px; }
+.cuestrip span{ font-size:12px; font-weight:600; color:var(--rust); background:var(--surface2); border:1px solid var(--line2); border-radius:8px; padding:4px 9px; }
+.happening{ color:var(--ink); font-size:14.5px; margin:0 0 8px; }
+.lbl{ font-weight:700; font-size:11px; letter-spacing:.6px; text-transform:uppercase; color:var(--terra); margin:16px 0 3px; }
+.lbl.move{ color:var(--sage); }
+.row{ display:flex; align-items:center; gap:11px; padding:12px 2px; min-height:54px; border-top:1px solid var(--line); }
+.row:first-of-type{ border-top:0; }
+.row .tx{ flex:1; } .row .tx b{ display:block; color:var(--clay); font-size:15px; font-weight:600; line-height:1.25; } .row .tx small{ color:var(--soft); font-size:12px; }
+.row .play{ flex:0 0 auto; min-width:44px; height:36px; padding:0 10px; border-radius:18px; background:var(--terra); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:700; gap:4px; }
+.row .play.s{ background:var(--surface2); color:var(--rust); border:1px solid var(--line2); }
+.tagk{ display:inline-block; font-size:10px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; padding:2px 6px; border-radius:5px; margin-left:5px; vertical-align:1px; }
+.k-w{ color:#9A4F33; background:#F0DECE; } .k-l{ color:#5F6C3F; background:#E7ECD6; } .k-p{ color:#6F5780; background:#EBE2F0; }
+.remember{ background:#EEF0E2; border:1px solid #DCE2C6; border-radius:13px; padding:12px 14px; margin:12px 0 2px; }
+.remember .rt{ font-weight:700; font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:var(--sage); margin-bottom:3px; }
+.remember p{ margin:0; font-size:14px; color:var(--ink); }
+.moves{ display:flex; flex-wrap:wrap; gap:7px; margin:6px 0 4px; }
+.moves span{ font-size:13.5px; font-weight:600; color:var(--clay); background:var(--surface2); border:1px solid var(--line2); border-radius:999px; padding:6px 13px; }
+
+/* breathing reference */
+.brstep{ display:flex; gap:10px; padding:10px 0; border-top:1px solid var(--line); }
+.brstep:first-of-type{ border-top:0; }
+.brstep .n{ flex:0 0 24px; height:24px; border-radius:50%; background:var(--rust); color:#fff; font-family:var(--serif); font-size:13px; display:flex; align-items:center; justify-content:center; margin-top:2px; }
+.brstep .bt b{ color:var(--clay); } .brstep .bt .w{ color:var(--rust); font-style:italic; font-size:13px; } .brstep .bt .d{ font-size:14px; }
+.brstep .jump{ flex:0 0 auto; align-self:center; background:var(--terra); color:#fff; font-size:11.5px; font-weight:700; border-radius:14px; padding:6px 10px; }
+
+/* tools internals */
+.grp{ font-family:var(--serif); color:var(--terra); font-size:18px; font-weight:600; border-bottom:1px solid var(--line2); padding-bottom:5px; margin:20px 0 8px; }
+.grp:first-child{ margin-top:4px; }
+.pacerwrap{ text-align:center; padding:2px 0; }
+.circle{ width:172px; height:172px; border-radius:50%; margin:10px auto 6px;
+  background:radial-gradient(circle at 50% 38%, #EBCFBC, #BC6C4B); color:#fff;
+  font-family:var(--serif); font-size:21px; display:flex; align-items:center; justify-content:center;
+  transform:scale(.55); transition:transform 4s ease-in-out; box-shadow:0 0 0 10px rgba(188,108,75,.10); }
+.circle.big{ transform:scale(1); }
+.pcue{ font-size:15.5px; color:var(--clay); font-weight:600; min-height:22px; margin:9px 0 1px; }
+.pcount{ font-family:var(--serif); font-size:26px; color:var(--rust); min-height:30px; margin-bottom:4px; }
+.plabel{ font-size:11px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--soft); margin:8px 0 5px; }
+.ptabs{ display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin:0 0 6px; }
+.ptab{ font-size:13px; font-weight:600; color:var(--rust); background:var(--surface2); border:1px solid var(--line2); border-radius:999px; padding:8px 14px; }
+.ptab.on{ background:var(--terra); color:#fff; border-color:var(--terra); }
+.pstart{ background:var(--terra); color:#fff; border:none; border-radius:999px; padding:13px 36px; font-size:16px; font-weight:700; }
+.pwatch{ display:inline-block; margin:11px 0 2px; color:var(--rust); font-size:13px; font-weight:700; text-decoration:underline; }
+.ctbtn{ width:100%; background:var(--terra); color:#fff; border:none; border-radius:14px; padding:18px; font-size:18px; font-weight:700; }
+.ctbtn.on{ background:var(--rust); }
+.ctread{ display:flex; gap:10px; margin:12px 0; }
+.ctread div{ flex:1; background:var(--surface2); border:1px solid var(--line2); border-radius:12px; padding:10px; text-align:center; }
+.ctread b{ display:block; font-family:var(--serif); font-size:22px; color:var(--clay); }
+.ctread small{ color:var(--soft); font-size:11px; }
+.ctstage{ text-align:center; font-weight:700; color:var(--rust); background:#EEF0E2; border:1px solid #DCE2C6; border-radius:12px; padding:11px; margin-bottom:10px; }
+.ctstage a{ color:var(--rust); text-decoration:underline; }
+.ctreset{ background:none; border:1px solid var(--line2); color:var(--soft); border-radius:999px; padding:8px 18px; font-size:13px; }
+.ctgo{ display:none; border-radius:12px; padding:12px 14px; margin:0 0 10px; font-weight:700; font-size:14.5px; text-align:center; line-height:1.35; }
+.ctgo.go{ background:#F4DBCB; border:1px solid #E0A887; color:#8A3B1E; }
+.ctgo.now{ background:#E7B4A0; border:1px solid #C9755A; color:#6F2A12; }
+.cthist{ margin-top:13px; }
+.cthist .hh{ font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--soft); margin-bottom:4px; }
+.hrow{ display:flex; justify-content:space-between; font-size:13.5px; padding:7px 2px; border-top:1px solid var(--line); color:var(--clay); }
+.hrow:first-of-type{ border-top:0; }
+.hrow span:last-child{ color:var(--soft); }
+/* section divider */
+.divider{ display:flex; align-items:center; gap:12px; margin:28px 6px 14px; color:var(--soft); font-size:11.5px; font-weight:700; letter-spacing:1.3px; text-transform:uppercase; }
+.divider::before,.divider::after{ content:''; flex:1; height:1px; background:var(--line2); }
+/* first-stage table */
+.stblwrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; margin:2px 0 6px; }
+.stbl{ width:100%; border-collapse:collapse; font-size:11.5px; min-width:330px; }
+.stbl th,.stbl td{ border:1px solid var(--line2); padding:7px 7px; text-align:left; vertical-align:top; }
+.stbl thead th{ background:var(--terra); color:#fff; font-family:var(--serif); font-size:13px; font-weight:600; text-align:center; }
+.stbl thead th:first-child{ background:var(--rust); }
+.stbl tbody th{ background:var(--surface2); color:var(--clay); font-weight:700; font-size:10.5px; width:58px; }
+.stbl td{ background:var(--surface); color:var(--ink); }
+.stbl .full{ text-align:center; font-style:italic; color:var(--soft); }
+.reset{ background:#F3E2D6; border:1px solid #E4C7B5; border-radius:14px; padding:14px 16px; margin:2px 0 0; }
+.rcol{ margin:0 0 6px; }
+.rcol .rl{ font-weight:700; font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:var(--terra); margin:0 0 3px; }
+.rcol ol{ margin:0; padding-left:20px; } .rcol li{ margin:2px 0; font-size:14.5px; } .rcol li b{ color:var(--clay); }
+.loop{ display:flex; gap:9px; margin:2px 0 0; }
+.loop a{ flex:1; display:flex; align-items:center; gap:9px; background:var(--surface2); border:1px solid var(--line2); border-radius:13px; padding:12px; }
+.loop a:active{ opacity:.85; }
+.loop .ic{ flex:0 0 28px; height:28px; border-radius:50%; background:var(--sage); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; }
+.loop b{ display:block; color:var(--clay); font-size:13.5px; line-height:1.15; } .loop small{ color:var(--soft); font-size:11px; }
+
+/* prep + checklist */
+.dl{ background:#EEF0E2; border:1px solid #DCE2C6; border-radius:14px; padding:13px 15px; margin:2px 0 14px; }
+.dl .dt{ font-weight:700; color:var(--clay); font-size:14.5px; margin-bottom:2px; }
+.dl .dh{ color:var(--soft); font-size:12.5px; margin-bottom:9px; }
+.dl label{ display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid #DCE2C6; font-size:14.5px; color:var(--clay); }
+.dl label:first-of-type{ border-top:0; }
+.dl input{ width:20px; height:20px; accent-color:var(--terra); }
+.dl .core{ margin-top:9px; font-size:12.5px; color:var(--ink); font-style:italic; }
+.note{ color:var(--soft); font-size:12.5px; font-style:italic; margin:7px 0 0; }
+.cnote{ font-size:14px; margin:8px 0; } .cnote b{ color:var(--clay); }
+.cnote ul{ margin:4px 0 0; padding-left:18px; } .cnote li{ margin:3px 0; }
+.aff{ background:var(--surface2); border-left:4px solid var(--terra); border-radius:0 11px 11px 0; padding:10px 14px; margin:8px 0; }
+.aff p{ margin:0; font-family:var(--serif); font-style:italic; color:var(--clay); font-size:17px; }
+
+.foot{ text-align:center; color:var(--soft); font-size:13px; padding:10px 24px 32px; }
+.foot .hr{ color:var(--line2); margin-bottom:10px; letter-spacing:5px; }
+
+/* inline video thumbnails */
+.vrow{ display:flex; gap:11px; align-items:center; padding:9px 2px; min-height:54px; border-top:1px solid var(--line); cursor:pointer; }
+.vrow:first-of-type{ border-top:0; }
+.vthumb{ position:relative; flex:0 0 120px; width:120px; aspect-ratio:16/9; border-radius:10px; overflow:hidden; background:var(--surface2); }
+.vthumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.vplay{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:32px; height:32px; border-radius:50%; background:rgba(154,79,51,.85); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; padding-left:2px; }
+.vrow .tx{ flex:1; } .vrow .tx b{ display:block; color:var(--clay); font-size:14.5px; font-weight:600; line-height:1.25; } .vrow .tx small{ color:var(--soft); font-size:12px; }
+.vrow.playing{ display:block; cursor:default; }
+.vrow.playing .tx{ margin-top:7px; }
+.vembed{ position:relative; width:100%; aspect-ratio:16/9; border-radius:11px; overflow:hidden; background:#000; }
+.vembed iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+.jbtn{ flex:0 0 auto; align-self:center; background:var(--terra); color:#fff; font-size:11.5px; font-weight:700; border:none; border-radius:14px; padding:6px 10px; cursor:pointer; }
+.moverow{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 2px; min-height:46px; border-top:1px solid var(--line); }
+.moverow:first-of-type{ border-top:0; }
+.moverow .mname{ color:var(--clay); font-size:15px; font-weight:600; }
+.moverow .tx{ flex:1; }
+.moverow .tx b{ display:block; color:var(--clay); font-size:15px; font-weight:600; line-height:1.25; }
+.moverow .tx small{ display:block; color:var(--soft); font-size:12.5px; line-height:1.3; margin-top:2px; }
+.moverow .jbtn{ flex:0 0 auto; align-self:center; background:var(--surface2); color:var(--rust); border:1px solid var(--line2); }
+/* movement row with real-frame thumbnail */
+.mvr{ display:flex; align-items:center; gap:12px; padding:9px 2px; border-top:1px solid var(--line); cursor:pointer; }
+.mvr:first-of-type{ border-top:0; }
+.mvr .mthumb{ position:relative; flex:0 0 104px; width:104px; aspect-ratio:16/9; border-radius:9px; overflow:hidden; background:var(--surface2); }
+.mvr .mthumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.mvr .mplay{ position:absolute; right:4px; bottom:4px; background:rgba(154,79,51,.92); color:#fff; font-size:10.5px; font-weight:700; padding:2px 6px; border-radius:7px; }
+.mvr .tx{ flex:1; } .mvr .tx b{ display:block; color:var(--clay); font-size:15px; font-weight:600; line-height:1.25; } .mvr .tx small{ display:block; color:var(--soft); font-size:12.5px; line-height:1.3; margin-top:2px; }
+.mvr.playing{ display:block; cursor:default; } .mvr.playing .tx{ margin-top:7px; }
+/* hip-angle key diagram */
+.hipkey{ display:flex; align-items:center; gap:14px; background:var(--surface2); border:1px solid var(--line2); border-radius:13px; padding:11px 14px; margin:4px 0 12px; }
+.hipkey svg{ flex:0 0 auto; }
+.hipkey .hkt b{ display:block; color:var(--clay); font-family:var(--serif); font-size:17px; line-height:1.15; }
+.hipkey .hkt small{ color:var(--soft); font-size:12.5px; }
+.arow{ padding:10px 2px; }
+.atx b{ display:block; color:var(--clay); font-size:14.5px; font-weight:600; } .atx small{ color:var(--soft); font-size:12px; }
+.arow audio{ width:100%; margin-top:8px; }
+/* ===== unified type system — one calm sans, hierarchy by weight/size ===== */
+.hero h1{ font-weight:700; letter-spacing:-.02em; }
+.hero .sub{ font-style:normal; letter-spacing:.01em; }
+.sectlabel{ font-weight:700; letter-spacing:-.01em; }
+.stit b{ font-weight:700; letter-spacing:-.01em; }
+.snum, .snum.g{ font-weight:700; }
+.grp{ font-weight:700; letter-spacing:-.01em; }
+.kwline span{ font-weight:600; }
+/* numbers: tabular so digits don't jitter */
+.pcount, .ctread b, .circle, .hrow, .cuestrip span, .stbl td{ font-variant-numeric:tabular-nums; }
+.ctread b{ font-weight:700; font-size:27px; letter-spacing:-.01em; }
+.pcount{ font-weight:700; }
+.aff p{ font-style:italic; }
+/* ===== calm pass — quieter surfaces, more air, less shout ===== */
+:root{ --shadow:0 1px 8px rgba(150,110,75,.045); }            /* gentler shadow everywhere */
+details{ margin-bottom:14px; }
+details.stagebox, details.ref{ border-left-width:3px; }       /* thinner accent edge */
+.sbody{ padding:4px 17px 18px; }                              /* more breathing room */
+.divider{ margin:34px 6px 16px; }
+.lbl{ color:var(--soft); }                                    /* section labels recede, not loud terracotta */
+.cuestrip span, .moves span, .ptab, .kwline span{ background:var(--surface); }  /* lighter chips */
+.ctread div, .remember, .reset, .dl{ box-shadow:none; }        /* flatter inner boxes */
+.ctread div{ background:var(--surface); }
+/* ===== labour-ready: contrast, tap targets, motion, feedback, offline ===== */
+:root{ --soft:#6E5D49; }                                              /* darker grey — readable in bright rooms */
+.ptab{ min-height:44px; display:inline-flex; align-items:center; }    /* finger-sized tap targets */
+.jbtn{ min-height:38px; display:inline-flex; align-items:center; justify-content:center; }
+.pwatch{ min-height:40px; }
+.circle{ cursor:pointer; }                                            /* whole circle starts/stops */
+#pword{ font-weight:600; }
+.circle.run{ box-shadow:0 0 0 12px rgba(188,108,75,.14), 0 0 34px rgba(188,108,75,.20); }
+.ctbtn.on{ animation:ctpulse 1.7s ease-in-out infinite; }            /* glanceable "timing now" */
+@keyframes ctpulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(154,79,51,0);} 50%{ box-shadow:0 0 0 6px rgba(154,79,51,.16);} }
+.ctelapsed{ display:inline-block; margin-left:8px; font-variant-numeric:tabular-nums; }
+/* offline-safe thumbnails: show a play tile if a remote image can't load */
+.vthumb::before{ content:"\25B6"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--terra); font-size:17px; background:var(--surface2); }
+.vthumb img{ position:relative; z-index:1; }
+.vthumb .vplay{ z-index:2; }
+/* pain & comfort remedies */
+.remedy{ padding:11px 2px; border-top:1px solid var(--line); font-size:15px; color:var(--ink); line-height:1.4; }
+.remedy:first-of-type{ border-top:0; }
+.remedy b{ color:var(--clay); }
+.remedy a{ color:var(--rust); text-decoration:underline; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  .circle{ transition-duration:.25s !important; }
+  .ctbtn.on{ animation:none; }
+  .chev{ transition:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="ribbon">
+    <span class="step" data-t="early"><span class="d">1</span>Early</span>
+    <span class="step" data-t="active"><span class="d">2</span>Active</span>
+    <span class="step" data-t="transition"><span class="d">3</span>Transition</span>
+    <span class="step" data-t="pushing"><span class="d">4</span>Pushing</span>
+    <span class="sep"></span>
+    <span class="step tool" data-t="tools">Tools</span>
+    <span class="step tool" data-t="notes">Prep</span>
+  </div>
+</div>
+
+<div class="hero">
+  <svg class="sun" viewBox="0 0 100 100" fill="none">
+    <g stroke="#BC6C4B" stroke-width="4" stroke-linecap="round">
+      <line x1="50" y1="6" x2="50" y2="18"/><line x1="50" y1="82" x2="50" y2="94"/>
+      <line x1="6" y1="50" x2="18" y2="50"/><line x1="82" y1="50" x2="94" y2="50"/>
+      <line x1="21" y1="21" x2="30" y2="30"/><line x1="70" y1="70" x2="79" y2="79"/>
+      <line x1="79" y1="21" x2="70" y2="30"/><line x1="30" y1="70" x2="21" y2="79"/></g>
+    <circle cx="50" cy="50" r="16" stroke="#BC6C4B" stroke-width="4"/>
+    <path d="M41 52 q9 10 18 0" stroke="#BC6C4B" stroke-width="3" stroke-linecap="round"/>
+  </svg>
+  <h1>Birth Prep</h1>
+  <div class="sub">breath · mind · movement</div>
+  <div class="kwline"><span>Trust</span><span>Allow</span><span>Embrace</span><span>Surrender</span><span>Open</span><span>Soften</span></div>
+  <p class="hsoft">Soften your jaw, your tongue, your shoulders</p>
+</div>
+
+<div class="wrap">
+
+  <div class="sectlabel">Where are you in labour?</div>
+  <div class="sectsub">Tap your stage — only that one opens.</div>
+
+
+  <!-- ===== STAGE: EARLY ===== -->
+  <details id="early" class="stagebox">
+    <summary><span class="snum">1</span><span class="stit"><b>Early labour</b><small>calm & conserve energy</small></span><span class="chev">▾</span></summary>
+    <div class="sbody">
+      <div class="cuestrip"><span>5–20 min apart</span><span>lasts 30–60 sec</span><span>cervix 0–5 cm</span><span>5–12 hrs</span></div>
+      <p class="happening">Your uterus is softening and drawing the cervix up. Rest, hydrate, stay light.</p>
+      <div class="remember"><div class="rt">Remember</div><p>Rest, rest, rest. Hydrate — muscles need oxygen. Breathe relaxed & deep. Say “open” and “down”. Control your thoughts → welcome oxytocin, refuse adrenaline.</p></div>
+      <div class="lbl">Breathe</div>
+      <div class="vrow" data-id="mk2Djr84rT0"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/mk2Djr84rT0/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Breath through surges</b><small>in 4 · out 6 — one hand on your heart, one on your belly. Inhale: send your air to baby. Exhale: release all your tension.</small></span></div>
+      <div class="lbl">Affirmations / Meditations</div>
+      <div class="vrow" data-id="7rQSynvy0pM"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/7rQSynvy0pM/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Finding My Deep Breath</b><small>Built to Birth · Bridget Teyler</small></span></div>
+      <div class="vrow" data-id="kfL-kFDkIZo"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/kfL-kFDkIZo/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Fear Cleansing Birth Affirmation Meditation</b><small>Built to Birth · Bridget Teyler</small></span></div>
+      <div class="vrow" data-id="RCmUaKolBIM"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/RCmUaKolBIM/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Calm Early Labor Meditation</b><small>Built to Birth · Bridget Teyler</small></span></div>
+      <div class="vrow" data-id="MRSNsns8P8I"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/MRSNsns8P8I/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Meditation for Labour — early labour (guided)</b><small>Hypnobirthing with Anja</small></span></div>
+      <div class="vrow" data-id="aEqbw1zN_CE"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/aEqbw1zN_CE/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Connecting to Your Baby in the Womb</b><small>Affirmation meditation · Bridget Teyler</small></span></div>
+      <div class="vrow" data-id="lB9gHnJWV9w"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/lB9gHnJWV9w/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Washing Away Your Anxious Thoughts (River of Peace)</b><small>Bridget Teyler</small></span></div>
+      <div class="lbl move">Move — open the top · knees wide (baby engages)</div>
+      <div class="hipkey"><svg viewBox="0 0 120 100" width="80" height="66" fill="none" stroke="#9A4F33" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="38" y="10" width="44" height="12" rx="6" fill="#BC6C4B" stroke="none"/><path d="M42 21 L15 52 L50 86"/><path d="M78 21 L105 52 L70 86"/><circle cx="15" cy="52" r="5" fill="#9A4F33" stroke="none"/><circle cx="105" cy="52" r="5" fill="#9A4F33" stroke="none"/></svg><div class="hkt"><b>Frog — knees OUT, ankles IN</b><small>external rotation opens the TOP of the pelvis — baby engages</small></div></div>
+      <div class="mvr" data-id="EBKu4MOVJDM" data-start="153"><span class="mthumb"><img loading="lazy" src="img/e_sit.jpg" alt=""><span class="mplay">▶ 2:33</span></span><span class="tx"><b>Sit on the ball — active rest</b><small>tall spine, knees at 90°, feet flat, legs wide</small></span></div>
+      <div class="mvr" data-id="EBKu4MOVJDM" data-start="186"><span class="mthumb"><img loading="lazy" src="img/e_hipcircle.jpg" alt=""><span class="mplay">▶ 3:06</span></span><span class="tx"><b>Hip circles</b><small>circle your hips both ways; tuck the tailbone under at the front</small></span></div>
+      <div class="mvr" data-id="EBKu4MOVJDM" data-start="202"><span class="mthumb"><img loading="lazy" src="img/e_figure8.jpg" alt=""><span class="mplay">▶ 3:22</span></span><span class="tx"><b>Figure-8s</b><small>draw an 8 with your hips — side-to-side, then front-to-back</small></span></div>
+      <div class="mvr" data-id="EBKu4MOVJDM" data-start="216"><span class="mthumb"><img loading="lazy" src="img/e_pelvictilt.jpg" alt=""><span class="mplay">▶ 3:36</span></span><span class="tx"><b>Pelvic tilts</b><small>on the ball or on all-fours: tuck the tailbone under, then release back</small></span></div>
+      <div class="mvr" data-id="EBKu4MOVJDM" data-start="258"><span class="mthumb"><img loading="lazy" src="img/e_squatball.jpg" alt=""><span class="mplay">▶ 4:18</span></span><span class="tx"><b>Assisted squat over the ball</b><small>feet wide, drape over the ball, let your lower back round</small></span></div>
+      <div class="mvr" data-id="d0LItE7_5nE" data-start="104"><span class="mthumb"><img loading="lazy" src="img/e_chairsquat.jpg" alt=""><span class="mplay">▶ 1:44</span></span><span class="tx"><b>Frog squat — hold a chair</b><small>legs wide, hold a chair or partner, sink into a squat, rock front-to-back</small></span></div>
+      <div class="mvr" data-id="d0LItE7_5nE" data-start="157"><span class="mthumb"><img loading="lazy" src="img/e_d0drape.jpg" alt=""><span class="mplay">▶ 2:37</span></span><span class="tx"><b>Kneel &amp; drape over the ball</b><small>kneel, rest your chest on the ball, rock your pelvis front-to-back</small></span></div>
+      <div class="mvr" data-id="NioMBYViObU" data-start="51"><span class="mthumb"><img loading="lazy" src="img/e_offball.jpg" alt=""><span class="mplay">▶ 0:51</span></span><span class="tx"><b>Off the ball</b><small>knees apart, ankles together — butterfly · backwards on the toilet · all-fours</small></span></div>
+      <div class="mvr" data-id="f2I8_GvDTS4" data-start="64"><span class="mthumb"><img loading="lazy" src="img/e_peanutseat.jpg" alt=""><span class="mplay">▶ 1:04</span></span><span class="tx"><b>Peanut ball — seated lunge</b><small>sit with one leg under, one leg over the peanut, knee out — rest &amp; encourage baby down</small></span></div>
+      <div class="mvr" data-id="f2I8_GvDTS4" data-start="102"><span class="mthumb"><img loading="lazy" src="img/e_peanut.jpg" alt=""><span class="mplay">▶ 1:42</span></span><span class="tx"><b>Peanut ball — side-lying</b><small>lie on your side, top leg up over the peanut, ankles together — rest &amp; help baby drop</small></span></div>
+    </div>
+  </details>
+
+  <!-- ===== STAGE: ACTIVE ===== -->
+  <details id="active" class="stagebox">
+    <summary><span class="snum">2</span><span class="stit"><b>Active labour</b><small>ride the surges, go inward</small></span><span class="chev">▾</span></summary>
+    <div class="sbody">
+      <div class="cuestrip"><span>3–5 min apart</span><span>lasts 60–90 sec</span><span>cervix 5–7 cm</span><span>3–5 hrs</span></div>
+      <p class="happening">Surges are strong and close. Turn inward, get in the tub, find your rhythm.</p>
+      <div class="remember"><div class="rt">Remember</div><p>Pain means relax & release. Welcome each surge — embrace, sink in. Get in the tub. When you think you can’t anymore, you’re near the top.</p></div>
+      <div class="lbl">Breathe</div>
+      <div class="vrow" data-id="oXYhM26ACAU" data-start="29"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/oXYhM26ACAU/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Destresser — in 4, out 6</b><small>jump to the demo</small></span></div>
+      <div class="vrow" data-id="Z1xvYhCx7aI" data-start="269"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/Z1xvYhCx7aI/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Bradley — in 3, out 3</b></span></div>
+      <div class="lbl">Affirmations / Meditations</div>
+      <div class="vrow" data-id="9BcCABcRw5U"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/9BcCABcRw5U/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Powerful Active Labor Meditation</b><small>Built to Birth · Bridget Teyler</small></span></div>
+      <div class="vrow" data-id="1Egp6eOehhU"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/1Egp6eOehhU/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Birth Waves Meditation</b><small>Bridget Teyler</small></span></div>
+      <div class="vrow" data-id="cLirg2IZ5bU" data-start="56"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/cLirg2IZ5bU/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Natural Labor &amp; Delivery — Cervix opening visualization</b><small>My Simple Meditation</small></span></div>
+      <div class="lbl move">Move — open the mid · asymmetric (baby rotates)</div>
+      <div class="mvr" data-id="EBKu4MOVJDM" data-start="300"><span class="mthumb"><img loading="lazy" src="img/a_seated.jpg" alt=""><span class="mplay">▶ 5:00</span></span><span class="tx"><b>Seated, one foot elevated</b><small>one foot on a stool or block; sway toward the raised leg</small></span></div>
+      <div class="mvr" data-id="d0LItE7_5nE" data-start="219"><span class="mthumb"><img loading="lazy" src="img/a_d0lunge.jpg" alt=""><span class="mplay">▶ 3:39</span></span><span class="tx"><b>Lunge over the ball</b><small>one leg out, drape over the ball, rock forward-back &amp; out to the side; swap sides</small></span></div>
+      <div class="mvr" data-id="d0LItE7_5nE" data-start="262"><span class="mthumb"><img loading="lazy" src="img/a_chairlunge.jpg" alt=""><span class="mplay">▶ 4:22</span></span><span class="tx"><b>Foot up on a chair</b><small>stand, one foot on the chair seat, hold the back, shift forward &amp; back; swap sides</small></span></div>
+      <div class="mvr" data-id="d0LItE7_5nE" data-start="283"><span class="mthumb"><img loading="lazy" src="img/a_d0lean.jpg" alt=""><span class="mplay">▶ 4:43</span></span><span class="tx"><b>Lean over a chair — sway side to side</b><small>stand and lean over the chair back, sway your hips side to side to rotate baby</small></span></div>
+      <div class="mvr" data-id="NioMBYViObU" data-start="107"><span class="mthumb"><img loading="lazy" src="img/a_offball.jpg" alt=""><span class="mplay">▶ 1:47</span></span><span class="tx"><b>Off the ball</b><small>lean on the bed, front knee turned out · empty your bladder · partner hip-squeeze · swap sides every ~5 surges</small></span></div>
+      <div class="mvr" data-id="f2I8_GvDTS4" data-start="173"><span class="mthumb"><img loading="lazy" src="img/a_peanut.jpg" alt=""><span class="mplay">▶ 2:53</span></span><span class="tx"><b>Peanut ball — side-lying, leg over</b><small>top leg draped up &amp; over the peanut — helps baby rotate (good with an epidural)</small></span></div>
+    </div>
+  </details>
+
+  <!-- ===== STAGE: TRANSITION ===== -->
+  <details id="transition" class="stagebox">
+    <summary><span class="snum">3</span><span class="stit"><b>Transition</b><small>the wall — surrender fully</small></span><span class="chev">▾</span></summary>
+    <div class="sbody">
+      <div class="cuestrip"><span>1–3 min / back-to-back</span><span>lasts 60–90 sec</span><span>cervix 7–10 cm</span><span>30 min–2+ hrs</span></div>
+      <p class="happening">The hardest, most intense stretch — the making of the mother. Your thinking brain takes the back seat.</p>
+      <div class="remember"><div class="rt">Remember</div><p>This is the wall — you’re nearly there. Slow exhale through the mouth, unclench your jaw, soften your tongue. Surrender fully. Don’t push yet if baby is still rotating.</p></div>
+      <div class="lbl">Breathe</div>
+      <div class="vrow" data-id="oXYhM26ACAU" data-start="107"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/oXYhM26ACAU/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Horse-lips — in 4, lips 6</b><small>relax jaw & pelvic floor</small></span></div>
+      <div class="vrow" data-id="Z1xvYhCx7aI" data-start="451"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/Z1xvYhCx7aI/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Lamaze sounds</b><small>“chi chi, cho cho”</small></span></div>
+      <div class="lbl">Affirmations / Meditations</div>
+      <div class="vrow" data-id="gNqmJqZewPg"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/gNqmJqZewPg/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Fear Cleansing Birth Meditation</b><small>Hypnobirthing with Anja</small></span></div>
+      <div class="vrow" data-id="qYyV8yvC62c"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/qYyV8yvC62c/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Visualization Meditation</b><small>Guided meditation &amp; affirmations · Bridget Teyler</small></span></div>
+      <div class="lbl move">Move — ease the urge · don’t push yet (let baby finish rotating)</div>
+      <div class="mvr" data-id="NioMBYViObU" data-start="160"><span class="mthumb"><img loading="lazy" src="img/t_handsknees.jpg" alt=""><span class="mplay">▶ 2:40</span></span><span class="tx"><b>Hands and knees</b><small>drop to all-fours and rock gently — relieves back pressure, eases an early urge to push, lets baby finish turning. Urge too strong before you’re fully open? Drop to knees-to-chest (chest down, bottom up) to take the pressure off.</small></span></div>
+    </div>
+  </details>
+
+  <!-- ===== STAGE: PUSHING ===== -->
+  <details id="pushing" class="stagebox">
+    <summary><span class="snum">4</span><span class="stit"><b>Pushing & birth</b><small>breathing baby out</small></span><span class="chev">▾</span></summary>
+    <div class="sbody">
+      <p class="happening">Follow your body — the urge will come. The uterus does the pushing; you may not need to force.</p>
+      <div class="remember"><div class="rt">Remember — avoid tearing</div><p>Off your back. Go slow so the perineum can stretch (the ring of fire). Horse lips or “PAPAPA”. Touch baby’s head as it crowns. Use the J-breath.</p></div>
+      <div class="lbl">Breathe</div>
+      <div class="vrow" data-id="oXYhM26ACAU" data-start="199"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/oXYhM26ACAU/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Cough breath — in 3, cough out 6</b><small>when you feel the urge to push: inhale 3 short breaths through your nose, then cough to push — 6 coughs</small></span></div>
+      <div class="vrow" data-id="eK9BrVX8RhM" data-start="405"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/eK9BrVX8RhM/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>J-breath — birthing baby out</b><small>inhale through your nose · expand your belly · low groan through the throat (muuuu) · energy to your baby, down the birth canal all the way</small></span></div>
+      <div class="vrow" data-id="Z1xvYhCx7aI" data-start="651"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/Z1xvYhCx7aI/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Laboring down — fill &amp; press down</b><small>fill your belly like a balloon on the inhale (belly out) · then create pressure by sending the breath down to baby — moving him along, without pushing</small></span></div>
+      <div class="lbl">Affirmations / Meditations</div>
+      <div class="vrow" data-id="yN1x7iUx-gA"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/yN1x7iUx-gA/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Breathing My Baby Out Meditation</b><small>Built to Birth · Bridget Teyler</small></span></div>
+      <div class="vrow" data-id="3ObNCE0iS1Y"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/3ObNCE0iS1Y/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Birth Affirmations — Pushing Baby Out, calmly &amp; with ease</b><small>Hypnobirthing with Anja</small></span></div>
+      <div class="lbl move">Move — open the outlet · knees in, feet apart (baby out)</div>
+      <div class="hipkey"><svg viewBox="0 0 120 100" width="80" height="66" fill="none" stroke="#9A4F33" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="38" y="10" width="44" height="12" rx="6" fill="#BC6C4B" stroke="none"/><path d="M42 21 L48 52 L12 86"/><path d="M78 21 L72 52 L108 86"/><circle cx="48" cy="52" r="5" fill="#9A4F33" stroke="none"/><circle cx="72" cy="52" r="5" fill="#9A4F33" stroke="none"/></svg><div class="hkt"><b>Reverse — knees IN, feet WIDE</b><small>internal rotation opens the OUTLET — the opposite of legs-wide</small></div></div>
+      <div class="mvr" data-id="EBKu4MOVJDM" data-start="367"><span class="mthumb"><img loading="lazy" src="img/p_drape.jpg" alt=""><span class="mplay">▶ 6:07</span></span><span class="tx"><b>Drape over ball</b><small>knees together, feet splayed apart — widens the sit-bones (NOT legs-wide); tuck as you bear down</small></span></div>
+      <div class="mvr" data-id="NioMBYViObU" data-start="200"><span class="mthumb"><img loading="lazy" src="img/p_offball.jpg" alt=""><span class="mplay">▶ 3:20</span></span><span class="tx"><b>Off the ball</b><small>knees together, ankles out · arch your back · follow the urge</small></span></div>
+      <div class="mvr" data-id="f2I8_GvDTS4" data-start="222"><span class="mthumb"><img loading="lazy" src="img/p_peanut.jpg" alt=""><span class="mplay">▶ 3:42</span></span><span class="tx"><b>Peanut ball — knees together</b><small>peanut between your ankles, knees together — internal rotation, less tearing</small></span></div>
+    </div>
+  </details>
+
+  <div class="divider" id="tools">Tools</div>
+
+  <!-- Breathe with me -->
+  <details id="pacer" class="ref">
+    <summary><span class="snum g">◐</span><span class="stit"><b>Breathe with me</b><small>follow the circle, eyes soft</small></span><span class="chev">▾</span></summary>
+    <div class="sbody">
+      <div class="pacerwrap">
+        <div class="plabel">Tap your stage</div>
+        <div class="ptabs" id="pstages">
+          <span class="ptab on" data-stage="early">Early</span>
+          <span class="ptab" data-stage="active">Active</span>
+          <span class="ptab" data-stage="transition">Transition</span>
+          <span class="ptab" data-stage="pushing">Pushing</span>
+        </div>
+        <div class="circle" id="pcircle"><span id="pword">Ready</span></div>
+        <div class="pcue" id="pcue">In 4 · out 6 — the foundation / destresser breath</div>
+        <div class="pcount" id="pcount"></div>
+        <button class="pstart" id="pstart">Start</button><br>
+        <a class="pwatch" id="pwatch" target="_blank" rel="noopener">▶ watch this breath</a>
+        <div class="plabel">Breath for this stage</div>
+        <div class="ptabs" id="pbreaths"></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Contraction timer -->
+  <details id="timer" class="ref">
+    <summary><span class="snum g">⏱</span><span class="stit"><b>Contraction timer</b><small>time surges · find your stage · when to go</small></span><span class="chev">▾</span></summary>
+    <div class="sbody">
+      <button class="ctbtn" id="ctBtn">Tap when a surge starts</button>
+      <div class="ctread">
+        <div><b id="ctLen">—</b><small>last length</small></div>
+        <div><b id="ctGap">—</b><small>avg apart</small></div>
+      </div>
+      <div class="ctgo" id="ctGo"></div>
+      <div class="ctstage" id="ctStage">Tap when a surge starts, then tap again when it ends.</div>
+      <button class="ctreset" id="ctReset">Reset</button>
+      <div class="cthist" id="ctHist"></div>
+      <div class="remember" style="margin-top:14px"><div class="rt">The signal — time to go</div><p>Regular surges about <b>5 min apart, ~1 min long</b>, strong enough you can’t talk or walk through them, held for <b>~30–45 min</b>.</p></div>
+    </div>
+  </details>
+
+
+  <!-- If it's not working — 10 R's -->
+  <details class="ref">
+    <summary><span class="snum g">↻</span><span class="stit"><b>If it’s not working</b><small>run the 10 R’s</small></span><span class="chev">▾</span></summary>
+    <div class="sbody">
+      <div class="reset">
+        <div class="rcol"><div class="rl">1st stage</div>
+          <ol><li><b>Relax</b> — every single muscle</li><li><b>Reframe</b> your internal dialogue</li><li><b>Release</b> endorphins — get happy</li><li><b>Replenish</b> — eat or drink</li><li><b>Reconcile</b> — with yourself, body, partner, baby</li></ol></div>
+        <div class="rcol"><div class="rl">2nd stage</div>
+          <ol start="6"><li><b>Read</b> what your body & heart say</li><li><b>Reposition</b> physically</li><li><b>Rest</b> & be thankful</li><li><b>Relinquish</b> control</li><li><b>Resolve</b> to birth your baby</li></ol></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Sounds on loop -->
+  <details class="ref">
+    <summary><span class="snum g">♪</span><span class="stit"><b>Sounds &amp; visuals on loop</b><small>affirmations · ocean waves · visualization</small></span><span class="chev">▾</span></summary>
+    <div class="sbody">
+      <div class="arow">
+        <div class="atx"><b>Affirmations</b><small>Yolande · play on loop</small></div>
+        <audio controls preload="none" src="https://s3.amazonaws.com/kajabi-storefronts-production/sites/123014/downloads/chS06WGQAWDciol7u9Lc_AffirmationFinalFBSmp3_2.mp3"></audio>
+      </div>
+      <div class="vrow" data-id="jGiBBq7dBpk"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/jGiBBq7dBpk/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Ocean waves</b><small>10 hours · background loop</small></span></div>
+      <div class="vrow" data-id="cLirg2IZ5bU"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/cLirg2IZ5bU/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Cervix opening visualization</b><small>Natural labour &amp; delivery · play on loop</small></span></div>
+    </div>
+  </details>
+
+  <!-- Pain & comfort remedies -->
+  <details class="ref">
+    <summary><span class="snum g">✚</span><span class="stit"><b>Pain &amp; comfort remedies</b><small>what to reach for</small></span><span class="chev">▾</span></summary>
+    <div class="sbody">
+      <div class="remedy"><b>Breathing</b> — slow exhale, soft jaw · open <a href="#pacer" data-t="pacer">Breathe with me</a></div>
+      <div class="remedy"><b>Movement &amp; the balls</b> — birth ball &amp; peanut ball; keep changing position</div>
+      <div class="remedy"><b>Hip squeezes</b> — counter-pressure from your partner through each surge</div>
+      <div class="remedy"><b>TENS machine</b> — on from early, boost the dial through surges</div>
+      <div class="remedy"><b>Comb</b> — squeeze the teeth into your palm (acupressure)</div>
+      <div class="remedy"><b>Natural oils</b> — clary sage / lavender to relax</div>
+      <div class="remedy"><b>Music / meditation</b> — your loop playlist, eyes soft</div>
+      <div class="remedy"><b>Eye mask</b> — block out the room, go inward</div>
+      <div class="remedy"><b>Coconut water / snacks</b> — sip &amp; nibble, keep your energy up</div>
+    </div>
+  </details>
+
+  <div class="divider">Before labour & prep</div>
+
+  <!-- ===== BEFORE LABOUR / COURSE NOTES ===== -->
+  <details id="notes" class="ref">
+    <summary><span class="snum g">★</span><span class="stit"><b>Before labour & notes</b><small>prep + Pain Free Birth course</small></span><span class="chev">▾</span></summary>
+    <div class="sbody">
+      <div class="grp">First-stage labour at a glance</div>
+      <div class="stblwrap">
+        <table class="stbl">
+          <thead><tr><th>First stage</th><th>Early</th><th>Active</th><th>Transition</th></tr></thead>
+          <tbody>
+            <tr><th>Overall function</th><td colspan="3" class="full">Effacement &amp; dilation</td></tr>
+            <tr><th>Contractions</th><td>5–20 min apart · last 30–60 sec</td><td>3–5 min apart · last 60–90 sec</td><td>1–3 min apart or back-to-back · 60–90 sec</td></tr>
+            <tr><th>Cervix</th><td>0–5 cm</td><td>5–7 cm</td><td>7–10 cm</td></tr>
+            <tr><th>Mental / emotional</th><td>Excited, nervous, talkative</td><td>Inward focused, not talking</td><td>“Hitting the wall”, needs most support</td></tr>
+            <tr><th>Length</th><td>5–12+ hrs</td><td>3–5 hrs</td><td>30 min–2+ hrs</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grp">Prep your body</div>
+      <div class="vrow" data-id="8pOJSR74ZoY"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/8pOJSR74ZoY/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>15-minute labour-inducing workout</b></span></div>
+      <div class="vrow" data-id="z8ik-Oje-k4"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/z8ik-Oje-k4/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Pelvic exercises</b></span></div>
+      <div class="vrow" data-id="YWtUdRdDeG4"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/YWtUdRdDeG4/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Perineal massage — prepare your pelvic floor</b><small>from week 35, every other day</small></span></div>
+      <div class="vrow" data-id="-ulK0Fkj_bI" data-start="3"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/-ulK0Fkj_bI/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Birth ball routine for pregnancy</b><small>full do-along — cat-cow, hip circles, figure-8s, squats, child’s pose · from ~week 36</small></span></div>
+      <div class="vrow" data-id="mS4v-jZQSaY"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/mS4v-jZQSaY/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Labour prep exercise</b></span></div>
+      <div class="vrow" data-id="YWt3qH-glTw"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/YWt3qH-glTw/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Labour prep exercise (2)</b></span></div>
+      <div class="vrow" data-id="WUR-H45y1ms"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/WUR-H45y1ms/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Birth ball to bring on & progress labour</b><small>natural induction</small></span></div>
+      <div class="vrow" data-id="FS5ywrKZSns"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/FS5ywrKZSns/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Help labour progress & naturally induce on your own</b><small>natural induction</small></span></div>
+      <div class="vrow" data-id="OGDB7YWxmiw"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/OGDB7YWxmiw/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Overcome late-labour stalls</b><small>essential movements &amp; techniques if labour slows</small></span></div>
+      <div class="vrow" data-id="SpU6_NaR5Zw" data-start="5"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/SpU6_NaR5Zw/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Pain Free Birth — course talk</b><small>the source of these learnings</small></span></div>
+
+      <div class="grp">Pain relief & partner</div>
+      <div class="vrow" data-id="J8rut0A9wKM"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/J8rut0A9wKM/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>How to reduce pain in labour</b></span></div>
+      <div class="vrow" data-id="eygf92QIcQA"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/eygf92QIcQA/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Counter-pressure</b><small>for your partner</small></span></div>
+      <div class="vrow" data-id="FwkEcsnXijY"><span class="vthumb"><img loading="lazy" src="https://i.ytimg.com/vi/FwkEcsnXijY/mqdefault.jpg" alt=""><span class="vplay">&#9654;</span></span><span class="tx"><b>Rebozo technique</b><small>for your partner</small></span></div>
+
+    </div>
+  </details>
+
+  <!-- AFFIRMATIONS -->
+  <details class="ref">
+    <summary><span class="snum g">♡</span><span class="stit"><b>Affirmations</b><small>say them out loud</small></span><span class="chev">▾</span></summary>
+    <div class="sbody">
+      <div class="aff"><p>“Contractions can’t harm me // they can’t be stronger than me, because they are me.”</p></div>
+      <div class="aff"><p>“With every surge I am closer and closer to meet Emiliukas.”</p></div>
+      <div class="aff"><p>“Feel, don’t fear.”</p></div>
+      <div class="aff"><p>“Pain is my cue to relax and release.”</p></div>
+      <div class="aff"><p>“I am grateful for every surge doing its work.”</p></div>
+      <div class="aff"><p>“Thank you, body — with every wave you bring me closer to Emiliukas.”</p></div>
+    </div>
+  </details>
+
+</div>
+
+<div class="foot">
+  <div class="hr">∴</div>
+  Compiled from your “Birth prep” & “Pain Free Birth” notes.<br>Breathe, soften, and trust your body.
+</div>
+
+<script>
+function jump(id){ var el=document.getElementById(id);
+  if(!el) return false;
+  if(el.tagName==='DETAILS') el.open=true;
+  el.scrollIntoView({behavior:'smooth',block:'start'}); return true; }
+document.querySelectorAll('[data-t]').forEach(function(c){
+  c.addEventListener('click', function(e){ if(jump(c.getAttribute('data-t'))) e.preventDefault(); });
+});
+
+/* ---------- accordion stages + progress ribbon ---------- */
+function ribbonSet(id){ document.querySelectorAll('.ribbon .step').forEach(function(s){ s.classList.toggle('on', s.getAttribute('data-t')===id); }); }
+document.querySelectorAll('details.stagebox').forEach(function(d){
+  d.addEventListener('toggle', function(){
+    if(d.open){ document.querySelectorAll('details.stagebox').forEach(function(o){ if(o!==d) o.open=false; }); ribbonSet(d.id); }
+    else if(!document.querySelector('details.stagebox[open]')){ ribbonSet(''); }
+  });
+});
+
+/* ---------- breathing pacer (breaths assigned to stages) ---------- */
+(function(){
+  var stages={
+    early:[
+      {chip:'In 4 · out 6', cue:'One hand on your heart, one on your belly. Inhale — send your air to baby. Exhale — release all your tension.', inL:'In — send your air to baby', in:4, outL:'Out — release all tension', out:6, vid:'mk2Djr84rT0'}
+    ],
+    active:[
+      {chip:'In 4 · out 6', cue:'One hand on your heart, one on your belly. Inhale — send your air to baby. Exhale — release all your tension.', inL:'In — send your air to baby', in:4, outL:'Out — release all tension', out:6, vid:'mk2Djr84rT0'},
+      {chip:'Bradley', cue:'In 3 · out 3 — steady, even rhythm.', inL:'In… steady', in:3, outL:'Out… steady', out:3, vid:'Z1xvYhCx7aI', t:269}
+    ],
+    transition:[
+      {chip:'Horse-lips', cue:'In nose 4 · flutter your lips out 6 — relaxes jaw & pelvic floor.', inL:'In through your nose', in:4, outL:'Out — flutter your lips', out:6, vid:'oXYhM26ACAU', t:107},
+      {chip:'Lamaze', cue:'Light, quick sounds — “chi chi, cho cho”.', inL:'Quick in', in:2, outL:'Soft out — “chi… cho”', out:2, vid:'Z1xvYhCx7aI', t:451}
+    ],
+    pushing:[
+      {chip:'Cough', cue:'In 3 short breaths · cough to push ×6 — when you feel the urge.', inL:'In — 3 short breaths', in:3, outL:'Cough it out — ×6', out:4, vid:'oXYhM26ACAU', t:199},
+      {chip:'J-breath', cue:'In through the nose, belly out · low groan (muuuu) · energy down to baby.', inL:'In — belly out', in:4, outL:'Low groan out — muuuu', out:8, vid:'eK9BrVX8RhM', t:405},
+      {chip:'Laboring down', cue:'Fill the belly like a balloon · press the breath down to baby — no pushing.', inL:'In — fill the balloon', in:4, outL:'Out — press down, belly out', out:6, vid:'Z1xvYhCx7aI', t:651}
+    ]
+  };
+  var curStage='early', cur=stages.early[0], running=false, t1=null, cnt=null, wl=null;
+  var circle=document.getElementById('pcircle'), word=document.getElementById('pword'),
+      cue=document.getElementById('pcue'), count=document.getElementById('pcount'),
+      startBtn=document.getElementById('pstart'), breathRow=document.getElementById('pbreaths'),
+      pwatch=document.getElementById('pwatch');
+  if(!circle) return;
+  function buzz(m){ try{ navigator.vibrate && navigator.vibrate(m); }catch(e){} }
+  function lockOn(){ try{ if('wakeLock' in navigator && !wl){ navigator.wakeLock.request('screen').then(function(x){ wl=x; x.addEventListener('release',function(){wl=null;}); }).catch(function(){}); } }catch(e){} }
+  function lockOff(){ try{ wl && wl.release(); }catch(e){} wl=null; }
+  document.addEventListener('visibilitychange', function(){ if(running && document.visibilityState==='visible') lockOn(); });
+  function setWatch(){ if(!pwatch) return; if(cur && cur.vid){ pwatch.style.display='inline-block'; pwatch.href='https://www.youtube.com/watch?v='+cur.vid+(cur.t?('&t='+cur.t+'s'):''); } else { pwatch.style.display='none'; } }
+  function idle(){ if(!running){ word.textContent='Ready'; cue.textContent=cur.cue; count.textContent=''; circle.classList.remove('big'); } setWatch(); }
+  function buildBreaths(){
+    breathRow.innerHTML='';
+    stages[curStage].forEach(function(b){
+      var chip=document.createElement('span');
+      chip.className='ptab'+(b===cur?' on':''); chip.textContent=b.chip;
+      chip.addEventListener('click', function(){
+        cur=b; breathRow.querySelectorAll('.ptab').forEach(function(x){x.classList.remove('on');});
+        chip.classList.add('on'); idle();
+      });
+      breathRow.appendChild(chip);
+    });
+  }
+  document.querySelectorAll('#pstages .ptab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('#pstages .ptab').forEach(function(x){x.classList.remove('on');});
+      tab.classList.add('on');
+      curStage=tab.getAttribute('data-stage'); cur=stages[curStage][0];
+      buildBreaths(); idle();
+    });
+  });
+  function phase(short, line, secs, big){
+    circle.style.transitionDuration=secs+'s'; word.textContent=short; cue.textContent=line;
+    requestAnimationFrame(function(){ circle.classList.toggle('big', big); });
+    buzz(18);
+    var n=secs; count.textContent=n; clearInterval(cnt);
+    cnt=setInterval(function(){ n--; count.textContent=(n>0?n:''); if(n<=0)clearInterval(cnt); },1000);
+  }
+  function loop(){
+    if(!running) return;
+    clearTimeout(t1);
+    phase('In', cur.inL, cur.in, true);
+    t1=setTimeout(function(){ if(!running) return;
+      phase('Out', cur.outL, cur.out, false);
+      t1=setTimeout(loop, cur.out*1000);
+    }, cur.in*1000);
+  }
+  function start(){
+    running=true; startBtn.textContent='Stop'; circle.classList.add('run'); lockOn(); buzz(18);
+    word.textContent='Ready…'; cue.textContent='settle your shoulders, soften your jaw'; count.textContent='';
+    clearTimeout(t1); t1=setTimeout(loop, 1600);
+  }
+  function stop(){
+    running=false; startBtn.textContent='Start'; circle.classList.remove('run','big');
+    clearTimeout(t1); clearInterval(cnt); lockOff(); idle();
+  }
+  function toggle(){ if(running){ stop(); } else { start(); } }
+  startBtn.addEventListener('click', toggle);
+  circle.addEventListener('click', toggle);
+  buildBreaths(); idle();
+})();
+
+/* ---------- contraction timer ---------- */
+(function(){
+  var btn=document.getElementById('ctBtn'); if(!btn) return;
+  var lenEl=document.getElementById('ctLen'), gapEl=document.getElementById('ctGap'),
+      stageEl=document.getElementById('ctStage'), resetBtn=document.getElementById('ctReset'),
+      histEl=document.getElementById('ctHist'), goEl=document.getElementById('ctGo');
+  var data, inSurge=false, startedAt=0, wl=null, elT=null;
+  try{ data=JSON.parse(localStorage.getItem('bp_ct')||'[]'); }catch(e){ data=[]; }
+  try{ var _s=JSON.parse(localStorage.getItem('bp_ct_surge')||'null'); if(_s&&_s.startedAt){ inSurge=true; startedAt=_s.startedAt; } }catch(e){}
+  function buzz(m){ try{ navigator.vibrate && navigator.vibrate(m); }catch(e){} }
+  function lockOn(){ try{ if('wakeLock' in navigator && !wl){ navigator.wakeLock.request('screen').then(function(x){ wl=x; x.addEventListener('release',function(){wl=null;}); }).catch(function(){}); } }catch(e){} }
+  function lockOff(){ try{ wl && wl.release(); }catch(e){} wl=null; }
+  document.addEventListener('visibilitychange', function(){ if(inSurge && document.visibilityState==='visible') lockOn(); });
+  function fmt(s){ s=Math.round(s); var m=Math.floor(s/60); var r=s%60; return m+':'+(r<10?'0':'')+r; }
+  function save(){ try{ localStorage.setItem('bp_ct', JSON.stringify(data.slice(-12))); }catch(e){} }
+  function persistSurge(){ try{ localStorage.setItem('bp_ct_surge', inSurge?JSON.stringify({startedAt:startedAt}):'null'); }catch(e){} }
+  function tickElapsed(){ if(!inSurge) return; btn.innerHTML='Tap when it ends <span class="ctelapsed">'+fmt((Date.now()-startedAt)/1000)+'</span>'; }
+  function avgOf(a){ return a.length? a.reduce(function(x,y){return x+y;},0)/a.length : null; }
+  // ranges from your course table: spacing (min) & length (sec)
+  var STAGES={
+    early:{name:'Early labour',  sp:[5,20], ln:[30,60]},
+    active:{name:'Active labour', sp:[3,5],  ln:[60,90]},
+    transition:{name:'Transition', sp:[0,3], ln:[60,90]}
+  };
+  function render(){
+    if(data.length){ var last=data[data.length-1]; if(last.dur!=null) lenEl.textContent=fmt(last.dur); }
+    var starts=data.map(function(d){return d.start;}); var gaps=[];
+    for(var i=1;i<starts.length;i++){ var g=(starts[i]-starts[i-1])/1000; if(g<=1500) gaps.push(g); } // ignore pauses >25 min
+    var avgGap=avgOf(gaps.slice(-5));
+    var durs=data.map(function(d){return d.dur;}).filter(function(x){return x!=null;});
+    var avgLen=avgOf(durs.slice(-5));
+    if(avgGap){ gapEl.textContent=fmt(avgGap); estimate(avgGap/60, avgLen); }
+    else if(data.length){ stageEl.textContent='Logged — time the next surge to see how far apart they are.'; }
+    goCheck(avgGap?avgGap/60:null, avgLen, data.length, gaps);
+    renderHist();
+  }
+  function goCheck(spMin, lnSec, n, gaps){
+    if(!goEl) return;
+    var msg='', cls='ctgo';
+    var stable = gaps && gaps.length>=3 && gaps.slice(-3).every(function(g){ return g/60<=5; });
+    if(spMin!=null){
+      if(spMin<=3){ msg='⚑ Go now — call your maternity unit. Surges are very close together.'; cls='ctgo now'; }
+      else if(spMin<=5 && stable && (lnSec==null||lnSec>=50) && n>=4){ msg='⚑ Looks like time to head in — call your unit. 2nd baby, ~30 min away — don’t wait it out.'; cls='ctgo go'; }
+    }
+    goEl.className=cls; goEl.textContent=msg; goEl.style.display=msg?'block':'none';
+    if(msg && goEl.getAttribute('data-fired')!==cls){ goEl.setAttribute('data-fired',cls); buzz([300,120,300]); var d=goEl.closest('details'); if(d && !d.open) d.open=true; try{ goEl.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){} }
+    if(!msg) goEl.removeAttribute('data-fired');
+  }
+  function renderHist(){
+    if(!histEl) return;
+    if(!data.length){ histEl.innerHTML=''; return; }
+    var rows=[];
+    for(var i=0;i<data.length;i++){ rows.push({len:data[i].dur, gap:i>0?(data[i].start-data[i-1].start)/1000:null}); }
+    rows=rows.slice(-6).reverse();
+    var h='<div class="hh">Recent surges · newest first</div>';
+    rows.forEach(function(r){ h+='<div class="hrow"><span>'+(r.len!=null?fmt(r.len)+' long':'—')+'</span><span>'+(r.gap!=null?fmt(r.gap)+' apart':'first surge')+'</span></div>'; });
+    histEl.innerHTML=h;
+  }
+  function inR(v,r){ return v>=r[0] && v<=r[1]; }
+  function estimate(spMin, lnSec){
+    // classify on spacing (the strongest signal), then check length against the same stage
+    var id = spMin<=3 ? 'transition' : (spMin<=5 ? 'active' : 'early');
+    var st=STAGES[id];
+    var msg='Pattern looks like <b>'+st.name+'</b> — ~'+fmt(spMin*60)+' apart';
+    if(lnSec!=null){
+      msg+=', ~'+Math.round(lnSec)+'s long';
+      if(lnSec<st.ln[0]) msg+=' — but still short for this stage';
+      else if(lnSec>st.ln[1] && id!=='transition') msg+=' — and long, may be moving on';
+    }
+    msg+=' · <a href="#'+id+'">open '+st.name.toLowerCase()+' →</a>';
+    stageEl.innerHTML=msg;
+    var a=stageEl.querySelector('a'); a.addEventListener('click', function(e){ if(jump(id)) e.preventDefault(); });
+  }
+  btn.addEventListener('click', function(){
+    var now=Date.now(); buzz(15);
+    if(!inSurge){ inSurge=true; startedAt=now; btn.classList.add('on'); persistSurge(); lockOn();
+      stageEl.textContent='Timing this surge… breathe through it.';
+      tickElapsed(); clearInterval(elT); elT=setInterval(tickElapsed,1000); }
+    else{ if(now-startedAt<2000) return;   /* ignore accidental double-tap */
+      inSurge=false; clearInterval(elT); btn.textContent='Tap when a surge starts'; btn.classList.remove('on'); persistSurge(); lockOff();
+      data.push({start:startedAt, dur:(now-startedAt)/1000}); save(); render(); }
+  });
+  resetBtn.addEventListener('click', function(){ data=[]; save(); inSurge=false; clearInterval(elT); try{localStorage.removeItem('bp_ct_surge');}catch(e){} lockOff();
+    btn.textContent='Tap when a surge starts'; btn.classList.remove('on');
+    lenEl.textContent='—'; gapEl.textContent='—'; stageEl.textContent='Tap when a surge starts, then tap again when it ends.'; if(histEl) histEl.innerHTML=''; if(goEl){ goEl.style.display='none'; goEl.textContent=''; goEl.removeAttribute('data-fired'); } });
+  if(goEl) goEl.setAttribute('role','alert');
+  if(inSurge){ btn.classList.add('on'); clearInterval(elT); elT=setInterval(tickElapsed,1000); tickElapsed(); lockOn(); stageEl.textContent='Timing this surge… breathe through it.'; }
+  render();
+})();
+
+(function(){
+  var BASE='https://www.youtube.com/embed/';
+  // YouTube's in-page player only runs from a real web address (http/https).
+  // Opened as a saved local file it errors (153), so there we open the video instead.
+  var LOCAL=(location.protocol!=='http:' && location.protocol!=='https:');
+  function src(id,start,list){
+    if(list) return BASE+'videoseries?list='+list+'&autoplay=1&playsinline=1&rel=0';
+    return BASE+id+'?autoplay=1&playsinline=1&rel=0'+(start?('&start='+start):'');
+  }
+  function watch(id,start,list){
+    if(list) return 'https://www.youtube.com/playlist?list='+list;
+    return 'https://www.youtube.com/watch?v='+id+(start?('&t='+start+'s'):'');
+  }
+  document.querySelectorAll('.vrow, .mvr').forEach(function(v){
+    v.addEventListener('click', function(){
+      if(v.classList.contains('playing')) return;
+      if(LOCAL){ window.open(watch(v.getAttribute('data-id'),v.getAttribute('data-start'),v.getAttribute('data-list')),'_blank'); return; }
+      var tx=v.querySelector('.tx'); var t=tx?tx.outerHTML:'';
+      v.classList.add('playing');
+      v.innerHTML='<div class="vembed"><iframe src="'+src(v.getAttribute('data-id'),v.getAttribute('data-start'),v.getAttribute('data-list'))+'" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>'+t;
+    });
+  });
+  document.querySelectorAll('.jbtn').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.stopPropagation();
+      if(LOCAL){ window.open(watch(b.getAttribute('data-id'),b.getAttribute('data-start'),null),'_blank'); return; }
+      if(b.getAttribute('data-done')) return; b.setAttribute('data-done','1');
+      var d=document.createElement('div'); d.className='vembed'; d.style.margin='8px 0 2px';
+      d.innerHTML='<iframe src="'+src(b.getAttribute('data-id'),b.getAttribute('data-start'),null)+'" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+      var step=b.closest('.brstep')||b.closest('.moverow'); (step||b).after(d);
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+# personal / not for the web
+*.pdf
+*.docx
+.DS_Store
